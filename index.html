@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bay Area Pollution Maps</title>
+    <link rel="stylesheet" href="assets/style.css" />
+    <!-- Plotly CDN - works on GitHub Pages and in iframes -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Bay Area Pollution Maps</h1>
+      <p class="subtitle">Interactive Plotly choropleth maps — client-side only</p>
+    </header>
+
+    <main class="container">
+      <section id="controls" class="controls">
+        <!-- Buttons are created dynamically by JS based on the mapping in assets/app.js -->
+        <div id="filters" class="filters" aria-label="Map filters"></div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+
+      <section class="map-wrap">
+        <div id="map" class="map" role="img" aria-label="Interactive map"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Place your exported Plotly JSON files in the `data/` folder. Filenames are configured in `assets/app.js`.</small>
+    </footer>
+
+    <script src="assets/app.js"></script>
+  </body>
+</html>
