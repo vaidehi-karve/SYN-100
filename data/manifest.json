@@ -1,0 +1,23 @@
+[
+  "casthma.json",
+  "ces40score.json",
+  "clean_enviro.json",
+  "copd.json",
+  "dieselpm.json",
+  "economic.json",
+  "education.json",
+  "h20contam.json",
+  "hpiscore.json",
+  "income.json",
+  "insurance.json",
+  "low_income.json",
+  "lq_aian.json",
+  "lq_asian.json",
+  "lq_black.json",
+  "lq_hispanic.json",
+  "lq_nhpi.json",
+  "lq_white.json",
+  "pm25.json",
+  "segregation.json",
+  "traffic_impacts.json"
+]
