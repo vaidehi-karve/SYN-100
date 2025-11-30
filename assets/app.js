@@ -71,12 +71,36 @@ function buildChoroplethFromGeojson(geojson) {
     return BAY_COUNTIES.includes(county);
   });
 
-  // attach id and gather values
+  // helper to coerce numeric-like strings to numbers (removes commas, percent signs)
+  function parseNum(v) {
+    if (v === undefined || v === null) return null;
+    if (typeof v === 'number') return v;
+    if (typeof v === 'string') {
+      const s = v.trim().replace(/,/g, '').replace(/%/g, '');
+      if (s === '') return null;
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    }
+    return null;
+  }
+
+  // attach id and gather values (coerce strings)
   const values = filtered.map(f => {
-    const v = f.properties && f.properties.value;
+    const raw = f.properties && (f.properties.value ?? f.properties.VALUE ?? f.properties.Val ?? f.properties.val);
+    const v = parseNum(raw);
     f.properties.id = String(f.properties.geoid);
-    return (v === undefined || v === null) ? null : Number(v);
+    return v;
   });
+
+  // basic stats for diagnostics
+  const validValues = values.filter(v => v !== null && !Number.isNaN(v));
+  const count = filtered.length;
+  const validCount = validValues.length;
+  const min = validCount ? Math.min(...validValues) : null;
+  const max = validCount ? Math.max(...validValues) : null;
+  const mean = validCount ? validValues.reduce((a,b) => a+b,0)/validCount : null;
+  console.info('Choropleth data:', { count, validCount, min, max, mean });
+  setStatus(`Loaded ${count} features — ${validCount} values (min: ${min ?? 'n/a'}, max: ${max ?? 'n/a'})`);
 
   const percentiles = percentileRanks(values);
   filtered.forEach((f, idx) => {
@@ -94,11 +118,18 @@ function buildChoroplethFromGeojson(geojson) {
     geojson: fc,
     locations: locations,
     z: z,
-    colorscale: 'RdYlGn',
+    // explicit diverging RdYlGn colors so the high end is visibly green
+    colorscale: [
+      [0, '#a50026'],   // deep red
+      [0.5, '#ffffbf'], // pale yellow
+      [1, '#006837']    // deep green
+    ],
     zmin: 0,
     zmax: 1,
+    reversescale: false,
+    zauto: false,
     marker: { opacity: 0.8, line: { width: 0.5, color: '#ffffff' } },
-    colorbar: { title: 'Percentile', titleside: 'right' },
+    colorbar: { title: 'Percentile', titleside: 'right', tickvals: [0, 0.5, 1], ticktext: ['0%', '50%', '100%'] },
     featureidkey: 'properties.id',
     customdata: customdata,
     hovertemplate: 'GEOID: %{location}<br>Value: %{customdata[0]}<br>Percentile: %{z:.2f}<extra></extra>'
