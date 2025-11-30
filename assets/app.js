@@ -113,17 +113,49 @@ function buildChoroplethFromGeojson(geojson) {
   const z = filtered.map((f, idx) => percentiles[idx]);
   const customdata = filtered.map((f, idx) => [f.properties.value]);
 
+  // resolve colorscale: accepts a preset string or an explicit array via window.PAGE_COLORSCALE
+  const DEFAULT_RDYLGN = [
+    [0, '#a50026'],   // deep red
+    [0.5, '#ffffbf'], // pale yellow
+    [1, '#006837']    // deep green
+  ];
+
+  const PRESET_SCALES = {
+    // use Plotly/ColorBrewer 'Blues' gradient
+    'Blues': [
+      [0.0, '#f7fbff'],
+      [0.125, '#deebf7'],
+      [0.25, '#c6dbef'],
+      [0.375, '#9ecae1'],
+      [0.5, '#6baed6'],
+      [0.625, '#4292c6'],
+      [0.75, '#2171b5'],
+      [0.875, '#08519c'],
+      [1.0, '#08306b']
+    ],
+    'RdYlGn': DEFAULT_RDYLGN
+  };
+
+  function resolveColorscale() {
+    const spec = window.PAGE_COLORSCALE;
+    if (!spec) return DEFAULT_RDYLGN;
+    if (Array.isArray(spec)) return spec;
+    if (typeof spec === 'string') {
+      if (PRESET_SCALES[spec]) return PRESET_SCALES[spec];
+      // allow simple names 'RdYlGn' -> default, 'RdYlGn_r' -> reversed
+      if (spec === 'RdYlGn_r') return DEFAULT_RDYLGN.slice().reverse();
+    }
+    return DEFAULT_RDYLGN;
+  }
+
+  const chosenColorscale = resolveColorscale();
+
   const trace = {
     type: 'choroplethmapbox',
     geojson: fc,
     locations: locations,
     z: z,
-    // explicit diverging RdYlGn colors so the high end is visibly green
-    colorscale: [
-      [0, '#a50026'],   // deep red
-      [0.5, '#ffffbf'], // pale yellow
-      [1, '#006837']    // deep green
-    ],
+    colorscale: chosenColorscale,
     zmin: 0,
     zmax: 1,
     reversescale: false,
