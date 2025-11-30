@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Health Problems & Access — Bay Area Maps</title>
+    <link rel="stylesheet" href="assets/style.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Health Problems / Access</h1>
+      <p class="subtitle">Asthma, COPD, Health Insurance Coverage</p>
+      <nav class="top-nav">
+        <a href="index.html">Home</a>
+        <a href="environmental.html">Environmental</a>
+        <a href="intersectionality.html">Intersectionality</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="controls" class="controls">
+        <div id="filters" class="filters" aria-label="Map filters"></div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+
+      <section class="map-wrap">
+        <div id="map" class="map" role="img" aria-label="Interactive map"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Files come from `data/`.</small>
+    </footer>
+
+    <script>
+      // Files for Health Problems / Access
+      window.PAGE_MAP_FILTER = ['casthma.json', 'copd.json', 'insurance.json'];
+      window.PAGE_TITLE = 'Health Problems / Access';
+      window.PAGE_LABEL_OVERRIDES = {
+        'casthma.json': 'Child Asthma',
+        'copd.json': 'COPD',
+        'insurance.json': 'Health Insurance Coverage'
+      };
+    </script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

@@ -182,6 +182,23 @@ function init() {
       console.warn('Error fetching manifest, falling back to static MAPS', err);
     }
 
+    // If the page defines a filter list, use it to restrict available files.
+    // Provide `window.PAGE_MAP_FILTER = ['file1.json','file2.json']` in the page HTML.
+    if (Array.isArray(window.PAGE_MAP_FILTER) && window.PAGE_MAP_FILTER.length) {
+      const allow = new Set(window.PAGE_MAP_FILTER);
+      maps = maps.filter(m => allow.has((m && m.file) ? m.file : m));
+    }
+
+    // Optional label overrides: window.PAGE_LABEL_OVERRIDES = { 'file.json': 'Pretty Name' }
+    if (window.PAGE_LABEL_OVERRIDES && typeof window.PAGE_LABEL_OVERRIDES === 'object') {
+      maps = maps.map(m => ({ ...(typeof m === 'string' ? { file: m } : m), label: (window.PAGE_LABEL_OVERRIDES[m.file] || m.label) }));
+    }
+
+    // Optional page title: window.PAGE_TITLE = 'My Title'
+    if (window.PAGE_TITLE && document.querySelector('.site-header h1')) {
+      document.querySelector('.site-header h1').textContent = window.PAGE_TITLE;
+    }
+
     // create buttons
     maps.forEach((m, i) => {
       const btn = makeButton(m);

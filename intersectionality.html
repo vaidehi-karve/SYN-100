@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Intersectionality — Bay Area Maps</title>
+    <link rel="stylesheet" href="assets/style.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Intersectionality</h1>
+      <p class="subtitle">Economic Strata & Race Quotients</p>
+      <nav class="top-nav">
+        <a href="index.html">Home</a>
+        <a href="environmental.html">Environmental</a>
+        <a href="health.html">Health Problems / Access</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="controls" class="controls">
+        <div id="filters" class="filters" aria-label="Map filters"></div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+
+      <section class="map-wrap">
+        <div id="map" class="map" role="img" aria-label="Interactive map"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Files come from `data/`.</small>
+    </footer>
+
+    <script>
+      // Files for Intersectionality
+      window.PAGE_MAP_FILTER = [
+        'economic.json','insurance.json','low_income.json',
+        'lq_aian.json','lq_asian.json','lq_black.json','lq_hispanic.json','lq_nhpi.json','lq_white.json'
+      ];
+      window.PAGE_TITLE = 'Intersectionality';
+      window.PAGE_LABEL_OVERRIDES = {
+        'economic.json': 'Economic Strata',
+        'low_income.json': 'Low Income',
+        'lq_aian.json': 'Race: AIAN',
+        'lq_asian.json': 'Race: Asian',
+        'lq_black.json': 'Race: Black',
+        'lq_hispanic.json': 'Race: Hispanic',
+        'lq_nhpi.json': 'Race: NHPI',
+        'lq_white.json': 'Race: White'
+      };
+    </script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

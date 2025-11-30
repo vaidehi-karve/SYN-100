@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Environmental Contamination — Bay Area Maps</title>
+    <link rel="stylesheet" href="assets/style.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Environmental Contamination</h1>
+      <p class="subtitle">CalEnviroScreen, PM2.5, H2O contamination</p>
+      <nav class="top-nav">
+        <a href="index.html">Home</a>
+        <a href="health.html">Health Problems / Access</a>
+        <a href="intersectionality.html">Intersectionality</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="controls" class="controls">
+        <div id="filters" class="filters" aria-label="Map filters"></div>
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+
+      <section class="map-wrap">
+        <div id="map" class="map" role="img" aria-label="Interactive map"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>Files come from `data/`. Edit `assets/app.js` or the page inline list to change behavior.</small>
+    </footer>
+
+    <script>
+      // Files for Environmental Contamination
+      window.PAGE_MAP_FILTER = ['ces40score.json', 'pm25.json', 'h20contam.json'];
+      window.PAGE_TITLE = 'Environmental Contamination';
+      window.PAGE_LABEL_OVERRIDES = {
+        'ces40score.json': 'CalEnviroScreen 4.0',
+        'pm25.json': 'PM2.5',
+        'h20contam.json': 'H2O Contamination'
+      };
+    </script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>
