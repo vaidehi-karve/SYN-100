@@ -94,7 +94,7 @@ function buildChoroplethFromGeojson(geojson) {
     geojson: fc,
     locations: locations,
     z: z,
-    colorscale: 'Blues_r',
+    colorscale: 'RdYlGn',
     zmin: 0,
     zmax: 1,
     marker: { opacity: 0.8, line: { width: 0.5, color: '#ffffff' } },

@@ -33,6 +33,10 @@ body{
 .hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .btn{display:inline-block;padding:10px 14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
 .btn-outline{background:transparent;border:1px solid rgba(15,23,42,0.06);color:var(--accent)}
+.page-links{display:flex;justify-content:center;margin:12px 0}
+.page-links-inner{display:flex;gap:10px;align-items:center}
+.page-links .btn{padding:8px 12px;border-radius:8px}
+.page-links .btn-outline{padding:8px 12px}
 .container{
   max-width:1200px;
   margin:20px auto;
