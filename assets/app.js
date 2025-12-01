@@ -12,6 +12,11 @@ const dataPath = 'data/'; // relative path to JSON files in repo (and manifest)
 const filtersEl = document.getElementById('filters');
 const statusEl = document.getElementById('status');
 const mapEl = document.getElementById('map');
+const subcatEl = document.getElementById('subcategories');
+
+// Store discovered maps so we can rebuild UI when subcategories change
+let ALL_MAPS = [];
+let CURRENT_MAPS = [];
 
 function setStatus(text) {
   statusEl.textContent = text || '';
@@ -133,6 +138,18 @@ function buildChoroplethFromGeojson(geojson) {
       [0.875, '#08519c'],
       [1.0, '#08306b']
     ],
+    // Greens (ColorBrewer / Plotly Greens)
+    'Greens': [
+      [0.0, '#f7fcf5'],
+      [0.125, '#e5f5e0'],
+      [0.25, '#c7e9c0'],
+      [0.375, '#a1d99b'],
+      [0.5, '#74c476'],
+      [0.625, '#41ab5d'],
+      [0.75, '#238b45'],
+      [0.875, '#006d2c'],
+      [1.0, '#00441b']
+    ],
     'RdYlGn': DEFAULT_RDYLGN
   };
 
@@ -192,6 +209,44 @@ function makeButton(map) {
   });
   return btn;
 }
+
+function buildFilterButtons(maps) {
+  // clear existing
+  filtersEl.innerHTML = '';
+  if (!maps || !maps.length) {
+    setStatus('No maps available for this selection.');
+    return;
+  }
+  maps.forEach((m, i) => {
+    const btn = makeButton(m);
+    filtersEl.appendChild(btn);
+    if (i === 0) btn.classList.add('active');
+  });
+  // load first
+  if (maps.length) loadMap(maps[0].file);
+}
+
+window.setPageSubcategory = function(name) {
+  // name: key in window.PAGE_SUBCATEGORIES
+  if (!window.PAGE_SUBCATEGORIES || !window.PAGE_SUBCATEGORIES[name]) return;
+  // If the page defines per-subcategory colors, apply it now so plots use the right palette
+  if (window.PAGE_SUBCATEGORY_COLORS && window.PAGE_SUBCATEGORY_COLORS[name]) {
+    window.PAGE_COLORSCALE = window.PAGE_SUBCATEGORY_COLORS[name];
+  }
+  // update subcategory button active state
+  if (subcatEl) {
+    subcatEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    const btn = subcatEl.querySelector(`button[data-sub="${name}"]`);
+    if (btn) btn.classList.add('active');
+  }
+  const allowed = new Set(window.PAGE_SUBCATEGORIES[name]);
+  CURRENT_MAPS = ALL_MAPS.filter(m => allowed.has((m && m.file) ? m.file : m));
+  // apply optional label overrides if present
+  if (window.PAGE_LABEL_OVERRIDES && typeof window.PAGE_LABEL_OVERRIDES === 'object') {
+    CURRENT_MAPS = CURRENT_MAPS.map(m => ({ ...(typeof m === 'string' ? { file: m } : m), label: (window.PAGE_LABEL_OVERRIDES[m.file] || m.label) }));
+  }
+  buildFilterButtons(CURRENT_MAPS);
+};
 
 async function loadMap(filename) {
   setStatus('Loading ' + filename + '...');
@@ -262,15 +317,43 @@ function init() {
       document.querySelector('.site-header h1').textContent = window.PAGE_TITLE;
     }
 
-    // create buttons
-    maps.forEach((m, i) => {
-      const btn = makeButton(m);
-      filtersEl.appendChild(btn);
-      if (i === 0) btn.classList.add('active');
-    });
+    // store all maps for later dynamic filtering
+    ALL_MAPS = maps.map(m => (typeof m === 'string' ? { file: m, label: tidyLabel(m) } : m));
 
-    // Load the first map by default (if exists)
-    if (maps.length) loadMap(maps[0].file);
+    // If the page defines PAGE_SUBCATEGORIES, render subcategory buttons
+    if (window.PAGE_SUBCATEGORIES && typeof window.PAGE_SUBCATEGORIES === 'object') {
+      if (subcatEl) {
+        subcatEl.innerHTML = '';
+        Object.keys(window.PAGE_SUBCATEGORIES).forEach((key, idx) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = key;
+          b.dataset.sub = key;
+          b.className = idx === 0 ? 'active' : '';
+          b.addEventListener('click', () => window.setPageSubcategory(key));
+          subcatEl.appendChild(b);
+        });
+      }
+      const defaultSub = window.PAGE_SUBCATEGORY_DEFAULT || Object.keys(window.PAGE_SUBCATEGORIES)[0];
+      // initialize CURRENT_MAPS via setPageSubcategory
+      window.setPageSubcategory(defaultSub);
+    } else {
+      // If the page defines a filter list, use it to restrict available files.
+      if (Array.isArray(window.PAGE_MAP_FILTER) && window.PAGE_MAP_FILTER.length) {
+        const allow = new Set(window.PAGE_MAP_FILTER);
+        CURRENT_MAPS = ALL_MAPS.filter(m => allow.has((m && m.file) ? m.file : m));
+      } else {
+        CURRENT_MAPS = ALL_MAPS.slice();
+      }
+
+      // Optional label overrides: window.PAGE_LABEL_OVERRIDES = { 'file.json': 'Pretty Name' }
+      if (window.PAGE_LABEL_OVERRIDES && typeof window.PAGE_LABEL_OVERRIDES === 'object') {
+        CURRENT_MAPS = CURRENT_MAPS.map(m => ({ ...(typeof m === 'string' ? { file: m } : m), label: (window.PAGE_LABEL_OVERRIDES[m.file] || m.label) }));
+      }
+
+      // create buttons and load first
+      buildFilterButtons(CURRENT_MAPS);
+    }
   })();
 
   // Resize handler to trigger Plotly relayout for some embed contexts

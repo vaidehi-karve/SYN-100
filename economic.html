@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Health Problems & Access — Bay Area Maps</title>
+    <title>Economic — Bay Area Maps</title>
     <link rel="stylesheet" href="assets/style.css" />
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
@@ -11,14 +11,14 @@
     <header class="site-header">
       <div class="header-inner">
         <div class="brand">
-          <h1>Health Problems / Access</h1>
-          <p class="subtitle">Asthma, COPD (Chronic Obstructive Pulmonary Disease), and health insurance coverage across neighborhoods.</p>
+          <h1>Economic</h1>
+          <p class="subtitle">Economic strata and income-related indicators.</p>
         </div>
         <nav class="top-nav">
           <a href="index.html">Home</a>
-          <a class="active" href="health.html">Health Problems</a>
+          <a href="health.html">Health Problems</a>
           <a href="environmental.html">Environmental</a>
-          <a href="economic.html">Economic</a>
+          <a class="active" href="economic.html">Economic</a>
           <a href="racial.html">Racial</a>
         </nav>
       </div>
@@ -28,9 +28,9 @@
       <section class="page-links" aria-hidden="false">
         <div class="page-links-inner">
           <a class="btn btn-outline" href="index.html">Home</a>
-          <a class="btn" href="health.html">Health Problems</a>
+          <a class="btn btn-outline" href="health.html">Health Problems</a>
           <a class="btn btn-outline" href="environmental.html">Environmental</a>
-          <a class="btn btn-outline" href="economic.html">Economic</a>
+          <a class="btn" href="economic.html">Economic</a>
           <a class="btn btn-outline" href="racial.html">Racial</a>
         </div>
       </section>
@@ -46,20 +46,14 @@
     </main>
 
     <footer class="footer">
-      <small>Files come from `data/`.</small>
+      <small>Files come from the `data/` folder.</small>
     </footer>
 
     <script>
-      // Files for Health Problems / Access
-      window.PAGE_MAP_FILTER = ['casthma.json', 'copd.json', 'insurance.json'];
-      window.PAGE_TITLE = 'Health Problems / Access';
-      window.PAGE_LABEL_OVERRIDES = {
-        'casthma.json': 'Child Asthma',
-        'copd.json': 'COPD',
-        'insurance.json': 'Health Insurance Coverage'
-      };
-      // use RdYlGn for this page
-      window.PAGE_COLORSCALE = 'RdYlGn';
+      window.PAGE_TITLE = 'Economic';
+      window.PAGE_MAP_FILTER = ['economic.json'];
+      window.PAGE_COLORSCALE = 'Greens';
+      window.PAGE_LABEL_OVERRIDES = { 'economic.json': 'Economic Strata' };
     </script>
     <script src="assets/app.js"></script>
   </body>
