@@ -20,6 +20,30 @@ body{
 }
 .site-header h1{margin:0;font-size:1.25rem}
 .subtitle{margin:6px 0 0;color:var(--muted);font-size:0.9rem}
+.hero-content{text-align:center}
+.home-title{font-size:4rem;margin:8px 0 8px;color:var(--accent);letter-spacing:0.4px;font-weight:800}
+.project-members{margin:0 0 12px;color:var(--muted);font-size:1.35rem;font-weight:600}
+
+/* Stronger selector to override .site-header h1 specificity */
+.site-header .home-title{
+  font-size:2rem;
+  margin:6px 0 6px;
+  color:var(--accent);
+  letter-spacing:0.4px;
+  font-weight:900;
+}
+
+@media (max-width:900px){
+  .site-header .home-title{font-size:4.2rem}
+  .home-title{font-size:3rem}
+  .project-members{font-size:1.1rem}
+}
+
+@media (max-width:420px){
+  .site-header .home-title{font-size:2.6rem}
+  .home-title{font-size:2.1rem}
+  .project-members{font-size:1.0rem}
+}
 .site-header .header-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}
 .site-header .brand{min-width:0}
 .top-nav{display:flex;gap:12px;margin-top:6px}
