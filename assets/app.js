@@ -8,6 +8,14 @@ const FALLBACK_MAPS = [
   { id: 'pollution', label: 'PM2.5', file: 'pollution_pm25.json' }
 ];
 
+// Files for which the colorscale should be reversed when plotted
+const REVERSAL_SET = new Set([
+  'casthma.json',
+  'copd.json',
+  'ces40score.json',
+  'pm25.json'
+]);
+
 const dataPath = 'data/'; // relative path to JSON files in repo (and manifest)
 const filtersEl = document.getElementById('filters');
 const statusEl = document.getElementById('status');
@@ -61,7 +69,7 @@ function percentileRanks(values) {
   return rank;
 }
 
-function buildChoroplethFromGeojson(geojson) {
+function buildChoroplethFromGeojson(geojson, filename) {
   // Accepts a FeatureCollection where each feature.properties has `geoid` and `value`.
   const features = (geojson && geojson.type === 'FeatureCollection') ? geojson.features.slice() : [];
 
@@ -167,6 +175,8 @@ function buildChoroplethFromGeojson(geojson) {
 
   const chosenColorscale = resolveColorscale();
 
+  const reversed = filename && REVERSAL_SET.has(filename);
+
   const trace = {
     type: 'choroplethmapbox',
     geojson: fc,
@@ -175,7 +185,7 @@ function buildChoroplethFromGeojson(geojson) {
     colorscale: chosenColorscale,
     zmin: 0,
     zmax: 1,
-    reversescale: false,
+    reversescale: !!reversed,
     zauto: false,
     marker: { opacity: 0.8, line: { width: 0.5, color: '#ffffff' } },
     colorbar: { title: 'Percentile', titleside: 'right', tickvals: [0, 0.5, 1], ticktext: ['0%', '50%', '100%'] },
@@ -261,14 +271,19 @@ async function loadMap(filename) {
       plot = { data: fig.data || fig, layout: fig.layout || {} };
     } else if (fig && fig.type === 'FeatureCollection') {
       // Build choropleth client-side from GeoJSON features (ported from your geopandas code)
-      plot = buildChoroplethFromGeojson(fig);
+      plot = buildChoroplethFromGeojson(fig, filename);
     } else {
       // Unknown format — attempt to interpret as geojson-like
       if (fig && fig.features) {
-        plot = buildChoroplethFromGeojson(fig);
+        plot = buildChoroplethFromGeojson(fig, filename);
       } else {
         throw new Error('Unrecognized JSON format for ' + filename);
       }
+    }
+
+    // If the fetched file is a pre-built Plotly figure, apply reversescale to its traces when requested
+    if (plot && plot.data && REVERSAL_SET.has(filename)) {
+      plot.data.forEach(d => { d.reversescale = true; });
     }
 
     const config = { responsive: true, displayModeBar: true, scrollZoom: false };
